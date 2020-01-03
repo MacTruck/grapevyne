@@ -43,7 +43,7 @@ const AddTipModal = props => (
     <h1 className="modal-h1">Add a Tip</h1>
     <input type="text" placeholder="Header" onChange={props.inputHeaderFunction} />
     <textarea rows="4" cols="50" placeholder="Blurb" onChange={props.inputBlurb} ></textarea>
-    <input type="text" placeholder="Location" onChange={props.inputLocation} />
+    <input type="text" placeholder="Zipcode" onChange={props.inputLocation} />
 
     <div className="dropDownTags">
       <button onClick={props.toggleTagsDropdown} >Click me to see all Available Tags!</button>

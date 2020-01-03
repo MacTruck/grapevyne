@@ -4,7 +4,7 @@ const router = express.Router();
 
 const tipsController = require('../controllers/tipsController');
 
-router.post('/createTip', tipsController.createTip, (req, res) => {
+router.post('/createTip', tipsController.createTip, tipsController.addTags, (req, res) => {
   res.json({ message: res.locals.message });
 });
 

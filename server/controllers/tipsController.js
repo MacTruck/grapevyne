@@ -8,13 +8,42 @@ tipsController.createTip = (req, res, next) => {
   // console.log('inside controller CreateTip');
   db.query(queryString)
     .then((data) => {
-      // console.log(data)
       res.locals.message = 'Tip created successfully';
-      next();
+      return next();
     })
     .catch((err) => { console.log(err); return next(err); });
 };
 
+tipsController.addTags = (req, res, next) => {
+  // const { tags } = req.body;
+  const tags = [];
+  let numberofTags = Math.floor(Math.random()*4) + 1;
+  
+  for (let i = 0; i < numberofTags; i += 1) {
+    tags[i] = Math.floor(Math.random()*15) + 1;
+  }
+
+  console.log(tags);
+
+  let queryString = '';
+
+  tags.forEach(tag => {
+    queryString += `INSERT INTO "tipToTags" ("tipId", "tagId") VALUES (
+      (SELECT id FROM tips WHERE header='${req.body.header}'),
+      (SELECT id FROM tags WHERE id='${tag}'));
+    `
+  });
+
+  db.query(queryString)
+    .then(data => {
+      res.locals.tags = 'Tags updated successfully';
+      return next();
+    })
+    .catch(err => {
+      console.log('Error in tipsController.addTags: ', err);
+      return next(err);
+    })
+}
 
 tipsController.updateVotes = (req, res, next) => {
   const { votes } = req.body;
