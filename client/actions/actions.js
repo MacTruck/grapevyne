@@ -43,25 +43,49 @@ export const toggleTagsDropdown = () => ({
   payload: toggleTagsDropdown,
 })
 
-export function addTip(tipData) {
+export function fetchTips(zip) {
   return (dispatch) => {
-    console.log('Attempting Post To DB with tipData: ', tipData);
-    dispatch({ type: types.POST_TIP });
-    fetch(`/tips/createTip`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(tipData),
-    })
+    dispatch({ type: types.START_FETCHING_TIPS });
+    fetch(`/tips/findTips/${zip}`)
       .then(res => res.json())
-      .then(data => {
-        console.log('Data returned from addTip post request: ');
-        console.log(data);
-      })
-      // .then(data => dispatch({ type: types.ADD_TIP, data }))
-      .catch(err => console.log("Error in addTip: ", err))
+      .then(data => dispatch({ type: types.FETCHING_TIPS, data }))
+      .catch(err => console.log("problem with fetching tips: ", err))
   };
+}
+
+export function fetchTags() {
+  return (dispatch) => {
+    dispatch({ type: types.START_FETCHING_TAGS });
+    fetch('/tips/tags')
+      .then(res => res.json())
+      .then(data => dispatch({ type: types.FETCHING_TAGS, data }))
+      .catch(err => console.log("problem with fetching tags: ", err));
+  }
+}
+
+export function addTip(tipData) {
+  if (tipData.header && tipData.blurb && tipData.zip) {
+    return (dispatch) => {
+      console.log('Attempting Post To DB with tipData: ', tipData);
+      dispatch({ type: types.POST_TIP });
+      // add tip to db
+      fetch(`/tips/createTip`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tipData),
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log('Data returned from addTip post request: ');
+          console.log(data);
+          dispatch({ type: types.TOGGLE_ADD_TIPS_BUTTON });
+        })
+        // .then(data => dispatch({ type: types.ADD_TIP, data }))
+        .catch(err => console.log("Error in addTip: ", err))
+    }
+  }
 }
 
 // FOR DEVELOPMENT ONLY
